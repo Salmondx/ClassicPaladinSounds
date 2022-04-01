@@ -78,6 +78,8 @@ local soundsToMute = {
 	1360128,
 	1360129,
 	1360130,
+	-- avenging wrath
+	1955772,
 };
 
 local _debug = true; -- Enable to Display debug messages.
@@ -115,12 +117,6 @@ local SwingSounds = {
 	"Interface\\Addons\\CPS\\Sounds\\Swing2.ogg",
 	"Interface\\Addons\\CPS\\Sounds\\Swing3.ogg",
 	"Interface\\Addons\\CPS\\Sounds\\Swing4.ogg"
-};
-
-local DSSounds = {
-	"Interface\\Addons\\CPS\\Sounds\\DS1.ogg",
-	"Interface\\Addons\\CPS\\Sounds\\DS2.ogg",
-	"Interface\\Addons\\CPS\\Sounds\\DS3.ogg",
 };
 
 local Swords2HSwings = {
@@ -201,22 +197,6 @@ function DetectWeaponType()
 	end;
 end
 
-function BladestormRend()
-	local found = select(1, AuraUtil.FindAuraByName("Bladestorm", "player"));
-	if found ~= nil then
-		PlaySoundFile("Interface\\Addons\\CPS\\Sounds\\Rend.ogg", "SFX");
-		C_Timer.After(1, BladestormRend);
-	end
-end
-
-function PlayCleaveSoundIfSweepingStrikes()
-	local found = select(1, AuraUtil.FindAuraByName("Sweeping Strikes", "player"));
-	if found ~= nil then
-		PlaySoundFile("Interface\\Addons\\CPS\\Sounds\\Cleave.ogg", "SFX");
-	end
-end
-
-
 function CritTimeoutPassed()
 	local currentCritTime = time();
 	return (currentCritTime - previousCritTime) > 20;
@@ -231,7 +211,6 @@ function PlayCritSoundIfRequired()
 	if subevent == "SPELL_DAMAGE" then
 		local spellId, _, _, _, _, _, _, _, _, critical = select(12, CombatLogGetCurrentEventInfo());
 		if spellId == 269937 then
-			-- PlaySoundFile("Interface\\Addons\\CPS\\Sounds\\Decisive.ogg", "SFX");
 			PlaySoundFile(SwingSounds[math.random(#SwingSounds)], "SFX");
 		end
 
@@ -246,7 +225,6 @@ function CPSFrame:UNIT_SPELLCAST_SUCCEEDED(unitID, lineID, spellID)
 	if unitID == "player" then
 		errTxt("Spell cast Succeeded by ".. unitID);
 		errTxt("Spell Id: " .. spellID);
-		print(spellID);
 
 		-- Begin Crusader Strike
 		if spellID == 35395 then
@@ -291,12 +269,6 @@ function CPSFrame:UNIT_SPELLCAST_SUCCEEDED(unitID, lineID, spellID)
 			PlaySwingSound();
 		end
 
-		-- -- zeal
-		-- if spellID == 269571 then
-		-- 	print("Here");
-		-- 	PlaySoundFile("Interface\\Addons\\CPS\\Sounds\\Decisive.ogg", "SFX");
-		-- end
-
 		-- Blade of Justice
 		if spellID == 184575 then
 			PlaySoundFile("Interface\\Addons\\CPS\\Sounds\\HolyCast.ogg", "SFX");
@@ -308,41 +280,10 @@ function CPSFrame:UNIT_SPELLCAST_SUCCEEDED(unitID, lineID, spellID)
 			PlaySoundFile("Interface\\Addons\\CPS\\Sounds\\DivineStorm.ogg", "SFX");
 		end
 
-		-- overpower
-		if spellID == 7384 then
-			PlaySoundFile(SwingSounds[math.random(#SwingSounds)], "SFX");
-			PlaySoundFile("Interface\\Addons\\CPS\\Sounds\\Decisive.ogg", "SFX");
-			PlayCleaveSoundIfSweepingStrikes();
-			-- PlaySoundFile("Interface\\Addons\\CPS\\Sounds\\Rend.ogg", "SFX");
-		end
-
-		-- rend
-		if spellID == 772 then
-			PlaySoundFile("Interface\\Addons\\CPS\\Sounds\\Rend.ogg", "SFX");
-		end
-
-		-- bladestorm
-		if spellID == 227847 then
-			PlaySoundFile("Interface\\Addons\\CPS\\Sounds\\BladestormStart.ogg", "SFX");
-			PlaySoundFile("Interface\\Addons\\CPS\\Sounds\\BladestormChannel.ogg", "SFX");
-			BladestormRend();
-		end
-
-		-- Avatar
-		if spellID == 107574 then
-			PlaySoundFile("Interface\\Addons\\CPS\\Sounds\\FireCast.ogg", "SFX");
-			PlaySoundFile("Interface\\Addons\\CPS\\Sounds\\RecklessnessCast.ogg", "SFX");
-		end
-
-		-- revenge
-		if spellID == 6572 then
-			PlaySoundFile("Interface\\Addons\\CPS\\Sounds\\Revenge.ogg", "SFX");
-		end
-
-		-- thunder clap
-		if spellID == 6343 then
-			PlaySoundFile("Interface\\Addons\\CPS\\Sounds\\ThunderClap.ogg", "SFX");
-			PlaySoundFile("Interface\\Addons\\CPS\\Sounds\\Lightning.ogg", "SFX");
+		-- avenging wrath
+		if spellID == 31884 then
+			PlaySoundFile("Interface\\Addons\\CPS\\Sounds\\HolyCast.ogg", "SFX");
+			PlaySoundFile("Interface\\Addons\\CPS\\Sounds\\AvengingWrath.ogg", "SFX");
 		end
 	end
 end
