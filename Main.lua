@@ -62,6 +62,22 @@ local soundsToMute = {
 	2130122,
 	2130123,
 	2130124,
+	-- blade of justice
+	1254585,
+	1254586,
+	1254587,
+	1254588,
+	-- divine storm
+	1264929,
+	1264930,
+	1264931,
+	1264932,
+	1264933,
+	1360126,
+	1360127,
+	1360128,
+	1360129,
+	1360130,
 };
 
 local _debug = true; -- Enable to Display debug messages.
@@ -281,19 +297,15 @@ function CPSFrame:UNIT_SPELLCAST_SUCCEEDED(unitID, lineID, spellID)
 		-- 	PlaySoundFile("Interface\\Addons\\CPS\\Sounds\\Decisive.ogg", "SFX");
 		-- end
 
-		-- Mortal Strike
-		if spellID == 12294 then
-			PlaySwingSound();
-			PlaySoundFile(SwingSounds[math.random(#SwingSounds)], "SFX");
-			PlaySoundFile("Interface\\Addons\\CPS\\Sounds\\Decisive.ogg", "SFX");
-			PlaySoundFile("Interface\\Addons\\CPS\\Sounds\\Rend.ogg", "SFX");
-			PlayCleaveSoundIfSweepingStrikes();
+		-- Blade of Justice
+		if spellID == 184575 then
+			PlaySoundFile("Interface\\Addons\\CPS\\Sounds\\HolyCast.ogg", "SFX");
+			PlaySoundFile("Interface\\Addons\\CPS\\Sounds\\Exorcism.ogg", "SFX");
 		end
 
-		-- Execute
-		if spellID == 163201 then
-			PlaySoundFile("Interface\\Addons\\CPS\\Sounds\\FireShield.ogg", "SFX");
-			PlayCleaveSoundIfSweepingStrikes();
+		-- Divine Storm
+		if spellID == 53385 then
+			PlaySoundFile("Interface\\Addons\\CPS\\Sounds\\DivineStorm.ogg", "SFX");
 		end
 
 		-- overpower
