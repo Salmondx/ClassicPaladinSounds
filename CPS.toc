@@ -1,0 +1,7 @@
+## Interface: 90001
+## Title: CPS
+## Author: Salmond
+## Version: 1.0.0
+## Notes: Completely replaces paladin sounds
+
+Main.lua
