@@ -162,6 +162,7 @@ local Axes2HSwings = {
 local CritEffect = {
 	[35395] = true,
 	[20271] = true,
+	[85256] = true,
 	-- [12294] = true,
 };
 
@@ -284,6 +285,11 @@ function CPSFrame:UNIT_SPELLCAST_SUCCEEDED(unitID, lineID, spellID)
 		if spellID == 31884 then
 			PlaySoundFile("Interface\\Addons\\CPS\\Sounds\\HolyCast.ogg", "SFX");
 			PlaySoundFile("Interface\\Addons\\CPS\\Sounds\\AvengingWrath.ogg", "SFX");
+		end
+
+		if spellID == 255937 then
+			PlaySoundFile("Interface\\Addons\\CPS\\Sounds\\HolyCast.ogg", "SFX");
+			PlaySoundFile("Interface\\Addons\\CPS\\Sounds\\HolyImpactHigh.ogg", "SFX");
 		end
 	end
 end
