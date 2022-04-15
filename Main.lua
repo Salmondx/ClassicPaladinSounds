@@ -132,6 +132,14 @@ local Swords2HSwings = {
 	"Interface\\Addons\\CPS\\Sounds\\Weapons\\Swords_2H\\Hit10.ogg",
 };
 
+local Swords2HSwingsCrit = {
+	"Interface\\Addons\\CPS\\Sounds\\Weapons\\Swords_2H\\Crit1.ogg",
+	"Interface\\Addons\\CPS\\Sounds\\Weapons\\Swords_2H\\Crit2.ogg",
+	"Interface\\Addons\\CPS\\Sounds\\Weapons\\Swords_2H\\Crit3.ogg",
+	"Interface\\Addons\\CPS\\Sounds\\Weapons\\Swords_2H\\Crit4.ogg",
+	"Interface\\Addons\\CPS\\Sounds\\Weapons\\Swords_2H\\Crit5.ogg",
+};
+
 local Maces2HSwings = {
 	"Interface\\Addons\\CPS\\Sounds\\Weapons\\Maces_2H\\Hit1.ogg",
 	"Interface\\Addons\\CPS\\Sounds\\Weapons\\Maces_2H\\Hit2.ogg",
@@ -145,6 +153,14 @@ local Maces2HSwings = {
 	"Interface\\Addons\\CPS\\Sounds\\Weapons\\Maces_2H\\Hit10.ogg",
 };
 
+local Maces2HSwingsCrit = {
+	"Interface\\Addons\\CPS\\Sounds\\Weapons\\Maces_2H\\Crit1.ogg",
+	"Interface\\Addons\\CPS\\Sounds\\Weapons\\Maces_2H\\Crit2.ogg",
+	"Interface\\Addons\\CPS\\Sounds\\Weapons\\Maces_2H\\Crit3.ogg",
+	"Interface\\Addons\\CPS\\Sounds\\Weapons\\Maces_2H\\Crit4.ogg",
+	"Interface\\Addons\\CPS\\Sounds\\Weapons\\Maces_2H\\Crit5.ogg",
+};
+
 local Axes2HSwings = {
 	"Interface\\Addons\\CPS\\Sounds\\Weapons\\Axes_2H\\Hit1.ogg",
 	"Interface\\Addons\\CPS\\Sounds\\Weapons\\Axes_2H\\Hit2.ogg",
@@ -156,6 +172,14 @@ local Axes2HSwings = {
 	"Interface\\Addons\\CPS\\Sounds\\Weapons\\Axes_2H\\Hit8.ogg",
 	"Interface\\Addons\\CPS\\Sounds\\Weapons\\Axes_2H\\Hit9.ogg",
 	"Interface\\Addons\\CPS\\Sounds\\Weapons\\Axes_2H\\Hit10.ogg",
+};
+
+local Axes2HSwingsCrit = {
+	"Interface\\Addons\\CPS\\Sounds\\Weapons\\Axes_2H\\Crit1.ogg",
+	"Interface\\Addons\\CPS\\Sounds\\Weapons\\Axes_2H\\Crit2.ogg",
+	"Interface\\Addons\\CPS\\Sounds\\Weapons\\Axes_2H\\Crit3.ogg",
+	"Interface\\Addons\\CPS\\Sounds\\Weapons\\Axes_2H\\Crit4.ogg",
+	"Interface\\Addons\\CPS\\Sounds\\Weapons\\Axes_2H\\Crit5.ogg",
 };
 
 -- contains IDs of spells that should play a Rend sound on crit
@@ -173,20 +197,39 @@ transmogLocation.type=0
 transmogLocation.modification=0
 
 local previousCritTime = 0;
+local autoAttackCrit = false;
 
 function PlaySwingSound()
+	local critical = autoAttackCrit;
 	local itemType = DetectWeaponType();
 	if itemType == "2H Mace" then
-		PlaySoundFile(Maces2HSwings[math.random(#Maces2HSwings)], "SFX");
+		if critical then
+			PlaySoundFile(Maces2HSwingsCrit[math.random(#Maces2HSwingsCrit)], "SFX");
+		else
+			PlaySoundFile(Maces2HSwings[math.random(#Maces2HSwings)], "SFX");
+		end
 	elseif itemType == "2H Sword" then
-		PlaySoundFile(Swords2HSwings[math.random(#Swords2HSwings)], "SFX");
+		if critical then
+			PlaySoundFile(Swords2HSwingsCrit[math.random(#Swords2HSwingsCrit)], "SFX");
+		else
+			PlaySoundFile(Swords2HSwings[math.random(#Swords2HSwings)], "SFX");
+		end
 	elseif itemType == "2H Axe" then
-		PlaySoundFile(Axes2HSwings[math.random(#Axes2HSwings)], "SFX");
+		if critical then
+			PlaySoundFile(Axes2HSwingsCrit[math.random(#Axes2HSwingsCrit)], "SFX");
+		else
+			PlaySoundFile(Axes2HSwings[math.random(#Axes2HSwings)], "SFX");
+		end
 	end;
+
+	if critical and CritTimeoutPassed() then
+		PlaySoundFile("Interface\\Addons\\CPS\\Sounds\\Vengeance.ogg", "SFX");
+		previousCritTime = time();
+	end
 end
 
 function DetectWeaponType()
-	local baseSourceID, baseVisualID, appliedSourceID, appliedVisualID, appliedCategoryID, pendingSourceID, pendingVisualID, pendingCategoryID, hasUndo, isHideVisual, itemSubclass = C_Transmog.GetSlotVisualInfo(transmogLocation);
+	local baseSourceID, baseVisualID, appliedSourceID, appliedVisualID, pendingSourceID, pendingVisualID, hasUndo, isHideVisual, itemSubclass = C_Transmog.GetSlotVisualInfo(transmogLocation);
 	if itemSubclass == 5 then
 		return "2H Mace";
 	elseif itemSubclass == 8 then
@@ -206,6 +249,13 @@ end
 function PlayCritSoundIfRequired()
 	local ts, subevent, _, sourceGUID = CombatLogGetCurrentEventInfo();
 	if sourceGUID ~= playerGUID then
+		return;
+	end
+
+	if subevent == "SWING_DAMAGE" then
+		local amount, overkill, school, resisted, blocked, absorbed, critical, glancing, crushing, isOffHand = select(12, CombatLogGetCurrentEventInfo());
+		autoAttackCrit = critical;
+		C_Timer.After(0.4, PlaySwingSound);
 		return;
 	end
 
@@ -231,7 +281,6 @@ function CPSFrame:UNIT_SPELLCAST_SUCCEEDED(unitID, lineID, spellID)
 		if spellID == 35395 then
 			PlaySoundFile(SwingSounds[math.random(#SwingSounds)], "SFX");
 			PlaySoundFile("Interface\\Addons\\CPS\\Sounds\\Decisive.ogg", "SFX");
-			PlaySwingSound();
 		end
 
 		-- Begin Judgement
@@ -267,7 +316,6 @@ function CPSFrame:UNIT_SPELLCAST_SUCCEEDED(unitID, lineID, spellID)
 		if spellID == 85256 then
 			PlaySoundFile(TemplarsVerdictSounds[math.random(#TemplarsVerdictSounds)], "SFX");
 			PlaySoundFile("Interface\\Addons\\CPS\\Sounds\\Decisive.ogg", "SFX");
-			PlaySwingSound();
 		end
 
 		-- Blade of Justice
@@ -287,10 +335,11 @@ function CPSFrame:UNIT_SPELLCAST_SUCCEEDED(unitID, lineID, spellID)
 			PlaySoundFile("Interface\\Addons\\CPS\\Sounds\\AvengingWrath.ogg", "SFX");
 		end
 
-		if spellID == 255937 then
-			PlaySoundFile("Interface\\Addons\\CPS\\Sounds\\HolyCast.ogg", "SFX");
-			PlaySoundFile("Interface\\Addons\\CPS\\Sounds\\HolyImpactHigh.ogg", "SFX");
-		end
+		-- wake of ashes
+		-- if spellID == 255937 then
+		-- 	PlaySoundFile("Interface\\Addons\\CPS\\Sounds\\HolyCast.ogg", "SFX");
+		-- 	PlaySoundFile("Interface\\Addons\\CPS\\Sounds\\HolyImpact.ogg", "SFX");
+		-- end
 	end
 end
 
