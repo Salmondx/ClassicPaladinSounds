@@ -112,6 +112,22 @@ local TemplarsVerdictSounds = {
 	"Interface\\Addons\\CPS\\Sounds\\TemplarsVerdict5.ogg",
 };
 
+local FinalVerdictSounds = {
+	"Interface\\Addons\\CPS\\Sounds\\FinalVerdict1.ogg",
+	"Interface\\Addons\\CPS\\Sounds\\FinalVerdict2.ogg",
+	"Interface\\Addons\\CPS\\Sounds\\FinalVerdict3.ogg",
+	"Interface\\Addons\\CPS\\Sounds\\FinalVerdict4.ogg",
+	"Interface\\Addons\\CPS\\Sounds\\FinalVerdict5.ogg",
+};
+
+local FinalVerdictCastSounds = {
+	"Interface\\Addons\\CPS\\Sounds\\FinalVerdictCast1.ogg",
+	"Interface\\Addons\\CPS\\Sounds\\FinalVerdictCast2.ogg",
+	"Interface\\Addons\\CPS\\Sounds\\FinalVerdictCast3.ogg",
+	"Interface\\Addons\\CPS\\Sounds\\FinalVerdictCast4.ogg",
+	"Interface\\Addons\\CPS\\Sounds\\FinalVerdictCast5.ogg",
+};
+
 local SwingSounds = {
 	"Interface\\Addons\\CPS\\Sounds\\Swing1.ogg",
 	"Interface\\Addons\\CPS\\Sounds\\Swing2.ogg",
@@ -204,21 +220,21 @@ function PlaySwingSound()
 	local itemType = DetectWeaponType();
 	if itemType == "2H Mace" then
 		if critical then
-			PlaySoundFile(Maces2HSwingsCrit[math.random(#Maces2HSwingsCrit)], "SFX");
+			PlaySoundFile(Maces2HSwingsCrit[math.random(#Maces2HSwingsCrit)], "Ambience");
 		else
-			PlaySoundFile(Maces2HSwings[math.random(#Maces2HSwings)], "SFX");
+			PlaySoundFile(Maces2HSwings[math.random(#Maces2HSwings)], "Ambience");
 		end
 	elseif itemType == "2H Sword" then
 		if critical then
-			PlaySoundFile(Swords2HSwingsCrit[math.random(#Swords2HSwingsCrit)], "SFX");
+			PlaySoundFile(Swords2HSwingsCrit[math.random(#Swords2HSwingsCrit)], "Ambience");
 		else
-			PlaySoundFile(Swords2HSwings[math.random(#Swords2HSwings)], "SFX");
+			PlaySoundFile(Swords2HSwings[math.random(#Swords2HSwings)], "Ambience");
 		end
 	elseif itemType == "2H Axe" then
 		if critical then
-			PlaySoundFile(Axes2HSwingsCrit[math.random(#Axes2HSwingsCrit)], "SFX");
+			PlaySoundFile(Axes2HSwingsCrit[math.random(#Axes2HSwingsCrit)], "Ambience");
 		else
-			PlaySoundFile(Axes2HSwings[math.random(#Axes2HSwings)], "SFX");
+			PlaySoundFile(Axes2HSwings[math.random(#Axes2HSwings)], "Ambience");
 		end
 	end;
 
@@ -316,6 +332,12 @@ function CPSFrame:UNIT_SPELLCAST_SUCCEEDED(unitID, lineID, spellID)
 		if spellID == 85256 then
 			PlaySoundFile(TemplarsVerdictSounds[math.random(#TemplarsVerdictSounds)], "SFX");
 			PlaySoundFile("Interface\\Addons\\CPS\\Sounds\\Decisive.ogg", "SFX");
+		end
+
+		-- Final Verdict
+		if spellID == 336872 then
+			PlaySoundFile(FinalVerdictCastSounds[math.random(#FinalVerdictCastSounds)], "SFX");
+			PlaySoundFile(FinalVerdictSounds[math.random(#FinalVerdictSounds)], "SFX");
 		end
 
 		-- Blade of Justice
